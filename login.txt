@@ -1,83 +1,138 @@
-package RMI_Application;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-public interface PrintI extends Remote {
-    void palindromeCheck() throws RemoteException;
-}
+package Exp;
 
-
-package RMI_Application;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.Scanner;
-public class PrintC extends UnicastRemoteObject implements PrintI {
-    public PrintC() throws RemoteException {
-        super();
-    }
-    public void palindromeCheck() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("");
-        System.out.println("Choose input type :  1.String  2.Number");
-        System.out.print("Enter choice : ");
-        int choice = sc.nextInt();
-        sc.nextLine(); 
-        String input;
-        if (choice == 1) {
-            System.out.print("Enter a string : ");
-            input = sc.nextLine();
-        } else if (choice == 2) {
-            System.out.print("Enter a number : ");
-            input = sc.next();
-        } else {
-            System.out.println("Invalid choice!");
-            return;
-        }
-        String revStr = "";
-        for (int i = input.length() - 1; i >= 0; i--) {
-            revStr += input.charAt(i);
-        }
-        if (input.equals(revStr)) {
-            System.out.println("It is a Palindrome");
-        } else {
-            System.out.println("It is not a Palindrome");
-        }
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
+public class AuthenticationServlet extends HttpServlet   {
+    private static final long serialVersionUID = 1L;
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException 
+    {
+        response.setContentType("text/html");
+    	String u= "thorat.anurag@gmail.com";
+    	String p= "Pass@123";
+        String username = (String) request.getAttribute("username");
+        String password = (String) request.getAttribute("password");
+        response.getWriter().println("<html><head><title>Authentication</title></head><body>");
+        response.getWriter().println( "<h2>Username: " + username + "</h2>");
+        response.getWriter().println( "<h2>Password: " + password + "</h2>");
+        if(username.equals(u) && password.equals(p))
+        	 response.getWriter().println("<h3 style=\"color: green;\">> User credentials verified </h3>");
+        else
+        	 response.getWriter().println( "<h3 style=\"color: red;\"> Invalid user </h3>" );
     }
 }
 
 
-package RMI_Application;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-public class Server {
-    public static void main(String[] args) {
-        try {
-            Registry registry = LocateRegistry.createRegistry(5000);
-            PrintC obj = new PrintC();
-            registry.bind("PALINDROME", obj);
-            System.out.println("Server started successfully!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+package Exp;
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
+public class ClientSideServlet extends HttpServlet     {
+    private static final long serialVersionUID = 1L;
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        request.setAttribute("username", username);
+        request.setAttribute("password", password);
+        request.getRequestDispatcher("AuthenticationServlet").forward(request, response);
     }
 }
 
 
-package RMI_Application;
-import java.rmi.Naming;
-import java.util.Scanner;
-public class Client {
-    public static void main(String[] args) {
-        try (Scanner sc = new Scanner(System.in)) {
-            int ch = 1;
-            PrintI iobj = (PrintI)Naming.lookup("rmi://localhost:5000/PALINDROME");
-            do {
-                iobj.palindromeCheck();
-                System.out.println("Press:  0.To EXIT   1.To Continue");
-                ch = sc.nextInt();
-                sc.nextLine(); 
-            } while (ch != 0);
-        } catch (Exception e) {
-            e.printStackTrace();
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" id="WebApp_ID" version="5.0">
+  <display-name>L</display-name>
+    <servlet>
+        <servlet-name>ClientSideServlet</servlet-name>
+        <servlet-class>Exp.ClientSideServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClientSideServlet</servlet-name>
+        <url-pattern>/ClientSideServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>AuthenticationServlet</servlet-name>
+        <servlet-class>Exp.AuthenticationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthenticationServlet</servlet-name>
+        <url-pattern>/AuthenticationServlet</url-pattern>
+    </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+</web-app>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-    }
-}
+        .form-container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Login Form</h2>
+        <form action="ClientSideServlet" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
