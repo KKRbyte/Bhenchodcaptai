@@ -1,0 +1,87 @@
+PalindromeChecker:
+package RmiNew;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface PalindromeChecker extends Remote {
+    boolean isPalindrome(String input) throws RemoteException;
+}
+
+
+PalindromeCheckerImpl:
+package RmiNew;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.RemoteException;
+
+public class PalindromeCheckerImpl extends UnicastRemoteObject implements PalindromeChecker {
+
+    protected PalindromeCheckerImpl() throws RemoteException {
+        super();
+    }
+
+    @Override
+    public boolean isPalindrome(String input) throws RemoteException {
+        if (input == null) return false;
+
+        // Remove non-alphanumeric characters and make lowercase
+        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String reverse = new StringBuilder(clean).reverse().toString();
+        return clean.equals(reverse);
+    }
+}
+
+
+PalindromeClient :
+package RmiNew;
+
+import java.rmi.Naming;
+import java.util.Scanner;
+
+public class PalindromeClient {
+    public static void main(String[] args) {
+        try {
+            // Lookup the remote object
+            PalindromeChecker checker = (PalindromeChecker) Naming.lookup("rmi://localhost/PalindromeService");
+
+            Scanner scanner = new Scanner(System.in);
+            int choice;
+
+            do {
+                System.out.print("Enter a string to check if it's a palindrome: ");
+                String input = scanner.nextLine();
+
+                boolean result = checker.isPalindrome(input);
+                System.out.println("Is palindrome? " + result);
+
+                System.out.print("Do you want to continue? Enter 1 (yes) / 0 (no): ");
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+            } while (choice == 1);
+
+            System.out.println("Exiting client.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+PalindromeServer:
+package RmiNew;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+public class PalindromeServer {
+    public static void main(String[] args) {
+        try {
+            PalindromeChecker checker = new PalindromeCheckerImpl();
+            Registry registry = LocateRegistry.createRegistry(1099); // default RMI port
+            registry.rebind("PalindromeService", checker);
+            System.out.println("Palindrome RMI Server is running...");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
