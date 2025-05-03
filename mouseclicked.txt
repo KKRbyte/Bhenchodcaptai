@@ -1,0 +1,74 @@
+package Experiment;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Mouse extends WindowAdapter implements MouseListener  {
+Frame f;
+TextArea ta;
+Label l1,l2;
+             Mouse() {
+f = new Frame();
+f.setVisible(true);
+f.setSize(500,500);
+f.setTitle("Mouse Handler");
+f.setLayout(null);
+init();
+add_component();
+register();
+}
+
+public void init() {
+l1 = new Label("Mouse Event Handler");
+l1.setBounds(165,50,200,50);
+l1.setFont(new Font("TIMES NEW ROMAN",Font.BOLD,12));
+ta = new TextArea();
+ta.setBounds(100,100,300,150);
+l2= new Label();
+l2.setBounds(100,250,150,50);
+l2.setFont(new Font("TIMES NEW ROMAN ",Font.BOND,12));
+}
+
+public void add_component() {
+f.add(l1);
+f.add(ta);
+f.add(l2);
+}
+
+public void windowClosing(WindowEvent e) {
+f.dispose();
+}
+
+public void mouseEntered(MouseEvent e) {
+l2.setText("Mouse Entered");
+ta.setBackground(Color.BLUE);
+}
+
+public void mouseExited(MouseEvent e) {
+l2.setText("Mouse Exited");
+ta.setBackground(Color.pink);
+}
+
+public void mouseClicked(MouseEvent e) {
+l2.setText("Mouse Clicked");
+ta.setBackground(Color.green);
+}
+
+public void mouseReleased(MouseEvent e) {
+l2.setText("Mouse Released");
+ta.setBackground(Color.CYAN);
+}
+
+public void mousePressed(MouseEvent e) {
+l2.setText("Mouse Pressed");
+ta.setBackground(Color.orange);
+}
+
+public void register() {
+f.addWindowListener(this);
+ta.addMouseListener(this);
+}
+
+public static void main(String args[]) {
+new Mouse();
+}
+}

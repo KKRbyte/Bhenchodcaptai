@@ -1,0 +1,243 @@
+base:
+package Exp;
+import java.util.Scanner;
+
+public class Base
+{
+	int rn;
+	String name;
+	Scanner sc= new Scanner(System.in);
+	public void get_data()
+	{
+		System.out.print("Enter Roll-no: ");
+		rn=sc.nextInt();
+		System.out.print("Enter Name: ");
+		name=sc.next();
+	}
+	public int retroll()
+	{
+		return rn;
+	}
+	public String retname()
+	{
+		return name;
+	}
+}
+
+
+derived:
+package Exp;
+import java.util.Scanner;
+
+public class Derived extends Base
+{
+	int mk;
+	String subj;
+	Scanner sc=new Scanner(System.in);
+	public void get_data()
+	{
+		super.get_data();
+		System.out.print("Enter Subject: ");
+		subj=sc.next();
+		System.out.print("Enter Marks: ");
+		mk=sc.nextInt();
+	}
+	public int retmk()
+	{
+		return mk;
+	}
+	public String retsubj()
+	{
+		return subj;
+	}
+}
+
+Exp4:
+package Exp;
+import java.sql.*;
+import java.util.*;
+
+public class Exp_4 extends Derived 
+{
+    Connection con;
+    Scanner sc;
+    Derived d;
+
+    Exp_4() 
+    {
+        d = new Derived();
+        sc = new Scanner(System.in); 
+    }
+
+    public static void main(String args[]) {
+        Exp_4 obj = new Exp_4();
+        obj.getConnection();
+        int ch = 0;
+        do 
+        {
+            System.out.println("\n1.Insert   2.Fetch   3.Delete   4.Update   5.Create      6.Search   7.Close Connection");
+            System.out.print("Enter your choice : ");
+            ch = obj.sc.nextInt();
+            switch (ch) 
+            {
+                case 1:
+                    try {
+                        obj.insert();
+                    }  catch (SQLException e)  {
+                        System.out.println("Error inserting data: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    try  {
+                        obj.fetch();
+                    }  catch (SQLException e)  {
+                        System.out.println("Error fetching data: " + e.getMessage());
+                    }
+                    break;
+                 case 3:
+                    try  {
+                        obj.delete();
+                    }  catch (SQLException e)  {
+                        System.out.println("Error deleting data: " + e.getMessage());
+                    }
+                    break;
+                case 4:
+                    try  {
+                        obj.update();
+                    }  catch (SQLException e)   {
+                        System.out.println("Error updating data: " + e.getMessage());
+                    }
+                    break;
+                case 5:
+                    try  {
+                        obj.create();
+                    }  catch (SQLException e)   {
+                        System.out.println("Error creating table: " + e.getMessage());
+                    }
+                    break;
+                case 6:
+                    try  {
+                        obj.search();
+                    } catch (SQLException e)   {
+                        System.out.println("Error searching data: " + e.getMessage());
+                    }
+                    break;
+                case 7:
+                    obj.closeconn();
+                    break;      
+                default:
+                    System.out.println("Invalid choice");
+            } 
+            System.out.print("To Continue enter 1 and to exit enter 0 : ");
+            ch = obj.sc.nextInt();
+        } while (ch != 0);
+        obj.closeconn();
+
+    }
+    public void getConnection() 
+    {
+        try 
+        {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/32253db";
+            String uname = "root";
+            String pass = "Tejaspatil#17";
+            con = DriverManager.getConnection(url, uname, pass);
+            System.out.println("Successful Connection");
+        } catch (Exception e) 
+        {
+            System.out.println("Error connecting to database: " + e);
+        }
+    }
+    public void create() throws SQLException 
+    {
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS Student1 (" +
+                                  "rollno INT PRIMARY KEY, " +
+                                  "name VARCHAR(50), " +
+                                  "subject VARCHAR(50), " +
+                                  "marks INT" +
+                                  ");";
+        Statement st = con.createStatement();
+        int result = st.executeUpdate(createTableQuery);
+        System.out.println("Table created or already exists.");
+    } 
+    public void search() throws SQLException {
+        System.out.print("Enter Roll-no to search: ");
+        int rollno = sc.nextInt();
+        String query = "SELECT * FROM student WHERE rollno = ?;";
+        PreparedStatement st = con.prepareStatement(query);
+        st.setInt(1, rollno);
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) 
+        {
+            System.out.println("Roll-no: " + rs.getInt(1));
+            System.out.println("Name: " + rs.getString(2));
+            System.out.println("Subject: " + rs.getString(3));
+            System.out.println("Marks: " + rs.getInt(4));
+        } 
+        else 
+        {
+            System.out.println("Student with Roll-no " + rollno + " not found.");
+        }
+    }
+    public void insert() throws SQLException 
+    {
+        d.get_data();
+        String q = "INSERT INTO Student1 (rollno, name, subject, marks) VALUES (?, ?, ?, ?)";
+        PreparedStatement st = con.prepareStatement(q);
+        st.setInt(1, d.retroll());
+        st.setString(2, d.retname());
+        st.setString(3, d.retsubj());
+        st.setInt(4, d.retmk());
+        int x = st.executeUpdate();
+        System.out.println("Rows updated: " + x);
+    }
+    public void fetch() throws SQLException 
+    {
+        String q = "SELECT * FROM Student1;";
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(q);
+        System.out.printf("%-10s | %-20s | %-15s | %-10s%n", "Roll-no", "Name",   "Subject", "Marks");
+        System.out.println("------------------------------------------------------------------");
+        while (rs.next()) {
+            System.out.printf("%-10d | %-20s | %-15s | %-10d%n", rs.getInt(1),    rs.getString(2), rs.getString(3), rs.getInt(4));
+        }
+    }
+    public void delete() throws SQLException 
+    {
+        System.out.print("Enter Roll-no to delete: ");
+        int rollno = sc.nextInt();
+        String q = "DELETE FROM Student1 WHERE rollno = ?;";
+        PreparedStatement st = con.prepareStatement(q);
+        st.setInt(1, rollno); 
+        int x = st.executeUpdate();
+        System.out.println("Rows deleted: " + x);
+    }
+    public void update() throws SQLException 
+    {
+        System.out.print("Enter Roll-no to update: ");
+        int rollno = sc.nextInt();
+        System.out.print("Enter new marks: ");
+        int marks = sc.nextInt();
+        String q = "UPDATE Student1 SET marks = ? WHERE rollno = ?;";
+        PreparedStatement st = con.prepareStatement(q);
+        st.setInt(1, marks); 
+        st.setInt(2, rollno); 
+        int x = st.executeUpdate();
+        System.out.println("Rows updated: " + x);
+    }
+    public void closeconn() 
+    {
+        try 
+        {
+            if (con != null) 
+            {
+                con.close();
+                System.out.println("Connection closed successfully.");
+            }
+        } catch (SQLException e) 
+        {
+            System.out.println("Error closing connection: " + e);
+        }
+    }
+}

@@ -1,0 +1,62 @@
+package Experiment;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Key extends WindowAdapter implements KeyListener  {
+Frame f;
+TextArea ta;
+Label l1,l2;
+
+Key() {
+f = new Frame();
+f.setVisible(true);
+f.setSize(500,500);
+f.setTitle("Key Handler");
+f.setLayout(null);
+init();
+add_component();
+register();
+}
+
+public void init() {
+l1 = new Label("Keyboard Event Handler");
+l1.setBounds(160,50,200,50);
+l1.setFont(new Font("Times New Roman",Font.BOLD,12));
+ta = new TextArea();
+ta.setBounds(100,100,300,150);
+l2= new Label();
+l2.setBounds(100,250,150,50);
+l2.setFont(new Font("Times New Roman",Font.BOLD,12));
+}
+
+public void add_component() {
+f.add(l1);
+f.add(ta);
+f.add(l2);
+}
+
+public void windowClosing(WindowEvent e) {
+f.dispose();
+}
+
+public void keyTyped(KeyEvent e) {
+l2.setText("Key Typed : "+e.getKeyChar());
+}
+
+public void keyReleased(KeyEvent e) {
+l2.setText("Key Released : "+e.getKeyChar());
+}
+
+public void keyPressed(KeyEvent e) {
+l2.setText("Key Pressed");
+}
+
+public void register() {
+f.addWindowListener(this);
+ta.addKeyListener(this);
+}
+
+public static void main(String args[]) {
+new Key();
+}
+}
