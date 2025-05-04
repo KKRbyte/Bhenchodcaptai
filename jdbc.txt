@@ -168,7 +168,7 @@ public class Exp_4 extends Derived {
     public void search() throws SQLException {
         System.out.print("Enter Roll-no to search: ");
         int rollno = sc.nextInt();
-        String query = "SELECT * FROM student WHERE rollno = ?;";
+        String query = "SELECT * FROM Student1 WHERE rollno = ?;";
         PreparedStatement st = con.prepareStatement(query);
         st.setInt(1, rollno);
         ResultSet rs = st.executeQuery();
@@ -244,3 +244,17 @@ public class Exp_4 extends Derived {
         }
     }
 }
+
+Sql:
+create database 32253db;
+use 32253db;
+Create table Student1(
+rollno INT Primary key,
+name VARCHAR(50),
+subject varchar(50),
+marks int
+);
+show tables from 32253db;
+select * from student1;
+
+drop database 32253db;
