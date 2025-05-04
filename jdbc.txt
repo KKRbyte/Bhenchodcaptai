@@ -57,14 +57,12 @@ package Exp;
 import java.sql.*;
 import java.util.*;
 
-public class Exp_4 extends Derived 
-{
+public class Exp_4 extends Derived {
     Connection con;
     Scanner sc;
     Derived d;
 
-    Exp_4() 
-    {
+    Exp_4() {
         d = new Derived();
         sc = new Scanner(System.in); 
     }
@@ -73,84 +71,88 @@ public class Exp_4 extends Derived
         Exp_4 obj = new Exp_4();
         obj.getConnection();
         int ch = 0;
-        do 
-        {
-            System.out.println("\n1.Insert   2.Fetch   3.Delete   4.Update   5.Create      6.Search   7.Close Connection");
+        do {
+            System.out.println("\n1.Insert   2.Fetch   3.Delete   4.Update   5.Create   6.Search   7.Close Connection");
             System.out.print("Enter your choice : ");
             ch = obj.sc.nextInt();
-            switch (ch) 
-            {
+            switch (ch) {
                 case 1:
+                    // ======== Insert Record Block ========
                     try {
                         obj.insert();
-                    }  catch (SQLException e)  {
+                    } catch (SQLException e) {
                         System.out.println("Error inserting data: " + e.getMessage());
                     }
                     break;
                 case 2:
-                    try  {
+                    // ======== Fetch/Display All Records Block ========
+                    try {
                         obj.fetch();
-                    }  catch (SQLException e)  {
+                    } catch (SQLException e) {
                         System.out.println("Error fetching data: " + e.getMessage());
                     }
                     break;
-                 case 3:
-                    try  {
+                case 3:
+                    // ======== Delete Record Block ========
+                    try {
                         obj.delete();
-                    }  catch (SQLException e)  {
+                    } catch (SQLException e) {
                         System.out.println("Error deleting data: " + e.getMessage());
                     }
                     break;
                 case 4:
-                    try  {
+                    // ======== Update Record Block ========
+                    try {
                         obj.update();
-                    }  catch (SQLException e)   {
+                    } catch (SQLException e) {
                         System.out.println("Error updating data: " + e.getMessage());
                     }
                     break;
                 case 5:
-                    try  {
+                    // ======== Create Table Block ========
+                    try {
                         obj.create();
-                    }  catch (SQLException e)   {
+                    } catch (SQLException e) {
                         System.out.println("Error creating table: " + e.getMessage());
                     }
                     break;
                 case 6:
-                    try  {
+                    // ======== Search Record Block ========
+                    try {
                         obj.search();
-                    } catch (SQLException e)   {
+                    } catch (SQLException e) {
                         System.out.println("Error searching data: " + e.getMessage());
                     }
                     break;
                 case 7:
+                    // ======== Close Connection Block ========
                     obj.closeconn();
-                    break;      
+                    break;
                 default:
                     System.out.println("Invalid choice");
-            } 
+            }
             System.out.print("To Continue enter 1 and to exit enter 0 : ");
             ch = obj.sc.nextInt();
         } while (ch != 0);
         obj.closeconn();
-
     }
-    public void getConnection() 
-    {
-        try 
-        {
+
+    // ======== Get Database Connection Block ========
+    public void getConnection() {
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String url = "jdbc:mysql://localhost:3306/32253db";
             String uname = "root";
             String pass = "Tejaspatil#17";
             con = DriverManager.getConnection(url, uname, pass);
             System.out.println("Successful Connection");
-        } catch (Exception e) 
-        {
+        } catch (Exception e) {
             System.out.println("Error connecting to database: " + e);
         }
     }
-    public void create() throws SQLException 
-    {
+
+    // ======== Create Table Block ========
+    public void create() throws SQLException {
         String createTableQuery = "CREATE TABLE IF NOT EXISTS Student1 (" +
                                   "rollno INT PRIMARY KEY, " +
                                   "name VARCHAR(50), " +
@@ -161,6 +163,8 @@ public class Exp_4 extends Derived
         int result = st.executeUpdate(createTableQuery);
         System.out.println("Table created or already exists.");
     } 
+
+    // ======== Search Record Block ========
     public void search() throws SQLException {
         System.out.print("Enter Roll-no to search: ");
         int rollno = sc.nextInt();
@@ -168,20 +172,18 @@ public class Exp_4 extends Derived
         PreparedStatement st = con.prepareStatement(query);
         st.setInt(1, rollno);
         ResultSet rs = st.executeQuery();
-        if (rs.next()) 
-        {
+        if (rs.next()) {
             System.out.println("Roll-no: " + rs.getInt(1));
             System.out.println("Name: " + rs.getString(2));
             System.out.println("Subject: " + rs.getString(3));
             System.out.println("Marks: " + rs.getInt(4));
-        } 
-        else 
-        {
+        } else {
             System.out.println("Student with Roll-no " + rollno + " not found.");
         }
     }
-    public void insert() throws SQLException 
-    {
+
+    // ======== Insert Record Block ========
+    public void insert() throws SQLException {
         d.get_data();
         String q = "INSERT INTO Student1 (rollno, name, subject, marks) VALUES (?, ?, ?, ?)";
         PreparedStatement st = con.prepareStatement(q);
@@ -192,19 +194,21 @@ public class Exp_4 extends Derived
         int x = st.executeUpdate();
         System.out.println("Rows updated: " + x);
     }
-    public void fetch() throws SQLException 
-    {
+
+    // ======== Fetch/Display All Records Block ========
+    public void fetch() throws SQLException {
         String q = "SELECT * FROM Student1;";
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery(q);
-        System.out.printf("%-10s | %-20s | %-15s | %-10s%n", "Roll-no", "Name",   "Subject", "Marks");
+        System.out.printf("%-10s | %-20s | %-15s | %-10s%n", "Roll-no", "Name", "Subject", "Marks");
         System.out.println("------------------------------------------------------------------");
         while (rs.next()) {
-            System.out.printf("%-10d | %-20s | %-15s | %-10d%n", rs.getInt(1),    rs.getString(2), rs.getString(3), rs.getInt(4));
+            System.out.printf("%-10d | %-20s | %-15s | %-10d%n", rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4));
         }
     }
-    public void delete() throws SQLException 
-    {
+
+    // ======== Delete Record Block ========
+    public void delete() throws SQLException {
         System.out.print("Enter Roll-no to delete: ");
         int rollno = sc.nextInt();
         String q = "DELETE FROM Student1 WHERE rollno = ?;";
@@ -213,8 +217,9 @@ public class Exp_4 extends Derived
         int x = st.executeUpdate();
         System.out.println("Rows deleted: " + x);
     }
-    public void update() throws SQLException 
-    {
+
+    // ======== Update Record Block ========
+    public void update() throws SQLException {
         System.out.print("Enter Roll-no to update: ");
         int rollno = sc.nextInt();
         System.out.print("Enter new marks: ");
@@ -226,17 +231,15 @@ public class Exp_4 extends Derived
         int x = st.executeUpdate();
         System.out.println("Rows updated: " + x);
     }
-    public void closeconn() 
-    {
-        try 
-        {
-            if (con != null) 
-            {
+
+    // ======== Close Connection Block ========
+    public void closeconn() {
+        try {
+            if (con != null) {
                 con.close();
                 System.out.println("Connection closed successfully.");
             }
-        } catch (SQLException e) 
-        {
+        } catch (SQLException e) {
             System.out.println("Error closing connection: " + e);
         }
     }
