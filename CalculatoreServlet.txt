@@ -1,138 +1,53 @@
-package com.calculator;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-public class CalculatorServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
-    // Handles GET requests
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        out.println("<!DOCTYPE html>");
-        out.println("<html><head><title>Calculator</title></head><body>");
-        out.println("<h2>Use the calculator form to perform operations.</h2>");
-        out.println("<a href='index.html'>Go to Calculator</a>");
-        out.println("</body></html>");
-    }
-
-    // Handles POST requests (form submission)
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        String num1Str = request.getParameter("num1");
-        String num2Str = request.getParameter("num2");
-        String operation = request.getParameter("operation");
-
-        double result = 0;
-
-        try {
-            double num1 = Double.parseDouble(num1Str);
-            double num2 = Double.parseDouble(num2Str);
-
-            switch (operation) {
-                case "add":
-                    result = num1 + num2;
-                    break;
-                case "subtract":
-                    result = num1 - num2;
-                    break;
-                case "multiply":
-                    result = num1 * num2;
-                    break;
-                case "divide":
-                    if (num2 == 0) {
-                        out.println("<h3 style='color:red;'>Error: Division by zero is not allowed!</h3>");
-                        return;
-                    }
-                    result = num1 / num2;
-                    break;
-                default:
-                    out.println("<h3 style='color:red;'>Invalid operation!</h3>");
-                    return;
-            }
-
-            out.println("<!DOCTYPE html>");
-            out.println("<html><head><title>Result</title></head><body>");
-            out.println("<h2>Calculation Result:</h2>");
-            out.println("<h3>" + num1 + " " + getOperator(operation) + " " + num2 + " = " + result + "</h3>");
-            out.println("<a href='index.html'>Go Back</a>");
-            out.println("</body></html>");
-
-        } catch (NumberFormatException e) {
-            out.println("<h3 style='color:red;'>Error: Invalid number format!</h3>");
-        }
-    }
-
-    // Helper method to get operator symbol
-    private String getOperator(String operation) {
-        switch (operation) {
-            case "add":
-                return "+";
-            case "subtract":
-                return "-";
-            case "multiply":
-                return "×";
-            case "divide":
-                return "÷";
-            default:
-                return "";
-        }
-    }
-}
-
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
-         https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-         version="5.0">
-
-    <servlet>
-        <servlet-name>CalculatorServlet</servlet-name>
-        <servlet-class>com.calculator.CalculatorServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>CalculatorServlet</servlet-name>
-        <url-pattern>/CalculatorServlet</url-pattern>
-    </servlet-mapping>
-
-    <display-name>CalculatorApp</display-name>
-
-</web-app>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Calculator</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px #aaa;
+            width: 250px;
+            text-align: center;
+        }
+        input, select, button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Simple Calculator</h2>
-        <form action="CalculatorServlet" method="post">
-            <input type="number" name="num1" placeholder="Enter first number" required>
-            <input type="number" name="num2" placeholder="Enter second number" required>
+        <h3>Simple Calculator</h3>
+        <form action="Calculator" method="post">
+            <input type="number" name="num1" placeholder="First number" required>
+            <input type="number" name="num2" placeholder="Second number" required>
             <select name="operation">
-                <option value="add">Addition (+)</option>
-                <option value="subtract">Subtraction (-)</option>
-                <option value="multiply">Multiplication (×)</option>
-                <option value="divide">Division (÷)</option>
+                <option value="add">Add (+)</option>
+                <option value="subtract">Subtract (-)</option>
+                <option value="multiply">Multiply (×)</option>
+                <option value="divide">Divide (÷)</option>
             </select>
             <button type="submit">Calculate</button>
         </form>
