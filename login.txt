@@ -1,5 +1,12 @@
 package Exp;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -9,7 +16,7 @@ public class AuthenticationServlet extends HttpServlet   {
             throws ServletException, IOException 
     {
         response.setContentType("text/html");
-    	String u= "thorat.anurag@gmail.com";
+    	String u= "mane.omkar@gmail.com";
     	String p= "Pass@123";
         String username = (String) request.getAttribute("username");
         String password = (String) request.getAttribute("password");
@@ -25,6 +32,13 @@ public class AuthenticationServlet extends HttpServlet   {
 
 
 package Exp;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -41,9 +55,11 @@ public class ClientSideServlet extends HttpServlet     {
 }
 
 
+
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" id="WebApp_ID" version="5.0">
-  <display-name>L</display-name>
+  <display-name>Demo</display-name>
+  <display-name>LoginPage</display-name>
     <servlet>
         <servlet-name>ClientSideServlet</servlet-name>
         <servlet-class>Exp.ClientSideServlet</servlet-class>
@@ -57,10 +73,9 @@ public class ClientSideServlet extends HttpServlet     {
         <servlet-class>Exp.AuthenticationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>AuthenticationServlet</servlet-name>
+     <servlet-name>AuthenticationServlet</servlet-name>
         <url-pattern>/AuthenticationServlet</url-pattern>
     </servlet-mapping>
-  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.jsp</welcome-file>
